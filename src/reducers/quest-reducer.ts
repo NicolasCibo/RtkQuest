@@ -8,7 +8,8 @@ export type QuestActions =
     {type: 'handle-review', payload: {kanji: QuestResult}} |
     {type: 'reset-quest'} |
     {type: 'search-from-table', payload: {id: number}} |
-    {type: 'filter-search-list', payload: {filter: Kanji[]}}
+    {type: 'filter-search-list', payload: {filter: Kanji[]}} |
+    {type: 'delete-history'}
 
 export type QuestState = {
     kanjiDB: Kanji[]
@@ -22,6 +23,9 @@ export type QuestState = {
     bad: number
     searchKanji: Kanji
     searchFilter: Kanji[]
+    history: string[]
+    currentHistory: string
+    endQuest: number
 }
 
 const initialQuest = () : QuestResult[] => {
@@ -36,6 +40,11 @@ const initialCurrent = () : number => {
 
 const initialReview = () : QuestResult[] => {
     const localStorageReviewKanji = localStorage.getItem('reviewKanji')
+    return localStorageReviewKanji ? JSON.parse(localStorageReviewKanji) : []
+}
+
+const initialHistory = () : string[] => {
+    const localStorageReviewKanji = localStorage.getItem('history')
     return localStorageReviewKanji ? JSON.parse(localStorageReviewKanji) : []
 }
 
@@ -57,7 +66,10 @@ export const initialState : QuestState = {
     good: 0,
     bad: 0,
     searchKanji: initialSearchKanji,
-    searchFilter: db
+    searchFilter: db,
+    history: initialHistory(),
+    currentHistory: "",
+    endQuest: 0
 }
 
 export const questReducer = (
@@ -67,6 +79,7 @@ export const questReducer = (
     
     if(action.type === 'generate-quest'){
         let newKanji : QuestResult[] = []
+        state.endQuest = action.payload.endNumber
 
         if(action.payload.buttonClick === "reviewQuest"){
             newKanji = [...state.reviewKanji]
@@ -74,6 +87,11 @@ export const questReducer = (
             for(let i = action.payload.startNumber-1; i < action.payload.endNumber; i++){
                 newKanji = [...newKanji, {...initialState.kanjiDB[i], answer : ''}]
             }
+
+            const historyDate = new Date()
+            const date = historyDate.toLocaleDateString()
+            const hour = historyDate.toLocaleTimeString()
+            state.currentHistory = `-Quest: del ${action.payload.startNumber} al ${action.payload.endNumber}, DESDE ${date} - ${hour}`
         }
         
         return {
@@ -152,6 +170,18 @@ export const questReducer = (
         }
     }
     if(action.type === 'reset-quest'){
+        const historyDate = new Date()
+        const date = historyDate.toLocaleDateString()
+        const hour = historyDate.toLocaleTimeString()
+        let newCurrentHistory : string = ""
+        if(state.endQuest !== 0 && state.current === state.endQuest){
+            newCurrentHistory = `${state.currentHistory} HASTA ${date} - ${hour}. Estado: FINALIZADO`
+        }else if(state.endQuest !== 0 && state.current !== state.endQuest){
+            newCurrentHistory = `${state.currentHistory} HASTA ${date} - ${hour}. Estado: CANCELADO`
+        }else{
+            newCurrentHistory = `${state.currentHistory} HASTA ${date} - ${hour}.`
+        }
+        
         return {
             ...state,
             kanjiQuest: [],
@@ -160,7 +190,9 @@ export const questReducer = (
             bad: 0,
             reveal: false,
             result:false,
-            questStart: false
+            questStart: false,
+            history: [...state.history, newCurrentHistory],
+            currentHistory: ""
         }
     }
     if(action.type === 'search-from-table'){
@@ -174,6 +206,12 @@ export const questReducer = (
         return {
             ...state,
             searchFilter: action.payload.filter
+        }
+    }
+    if(action.type === 'delete-history'){
+        return {
+            ...state,
+            history: []
         }
     }
     

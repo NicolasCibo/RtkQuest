@@ -33,7 +33,7 @@ function SearchTable({list, handleTable = () => {}, scrollToElement = () => {}} 
     }, [visibleItems])
 
   return (
-    <div className={`${isScrollable ? 'md:h-full md:scrollbar-custom overflow-y-scroll' : 'overflow-y-auto'} mt-10 md:mt-0`}>
+    <div className={`${isScrollable ? 'md:h-[90%] md:scrollbar-custom overflow-y-scroll' : 'overflow-y-auto'} mt-10 mr-5 p-2`}>
         <table className="min-w-full table-auto">
             <thead className="top-0 bg-[#2a2a2a] z-10">
             <tr className='border'>
@@ -49,9 +49,9 @@ function SearchTable({list, handleTable = () => {}, scrollToElement = () => {}} 
                 className="text-center border hover:bg-blue-500 hover:text-white hover:cursor-pointer"
                 onClick={() => {handleTable(filter.id); scrollToElement()}}
                 >
-                <td className='border-r'>{filter.kanji}</td>
-                <td className='border-r'>{filter.keyword}</td>
-                <td>{filter.id}</td>
+                    <td className='border-r'>{filter.kanji}</td>
+                    <td className='border-r'>{filter.keyword}</td>
+                    <td>{filter.id}</td>
                 </tr>
             ))}
             </tbody>
