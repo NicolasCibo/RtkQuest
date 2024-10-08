@@ -13,7 +13,8 @@ function Layout() {
     localStorage.setItem('reviewKanji', JSON.stringify(state.reviewKanji))
     localStorage.setItem('questStart', JSON.stringify(state.questStart))
     localStorage.setItem('history', JSON.stringify(state.history))
-  }, [state.kanjiQuest, state.reviewKanji, state.history])
+    localStorage.setItem('currentHistory', JSON.stringify(state.currentHistory))
+  }, [state.kanjiQuest, state.reviewKanji, state.history, state.currentHistory])
 
   return (
     <>

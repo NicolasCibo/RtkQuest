@@ -48,6 +48,11 @@ const initialHistory = () : string[] => {
     return localStorageReviewKanji ? JSON.parse(localStorageReviewKanji) : []
 }
 
+const initialCurrentHistory = () : string => {
+    const localStorageReviewKanji = localStorage.getItem('currentHistory')
+    return localStorageReviewKanji ? JSON.parse(localStorageReviewKanji) : ""
+}
+
 const initialStart = () : boolean => {
     const localStorageReviewKanji = localStorage.getItem('questStart')
     return localStorageReviewKanji ? JSON.parse(localStorageReviewKanji) : false
@@ -68,7 +73,7 @@ export const initialState : QuestState = {
     searchKanji: initialSearchKanji,
     searchFilter: db,
     history: initialHistory(),
-    currentHistory: "",
+    currentHistory: initialCurrentHistory(),
     endQuest: 0
 }
 
