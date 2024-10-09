@@ -80,7 +80,9 @@ function Form() {
           toggleMenu={toggleMenu}
           menuOpen={menuOpen}
         >
-          {infoRender === "view" ? <SearchTable list={state.reviewKanji} /> : <History />}
+          {menuOpen === false 
+          ? "" 
+          : (infoRender === "view" ? <SearchTable list={state.reviewKanji} /> : <History />)}
         </Modal>
     </form>
   )
